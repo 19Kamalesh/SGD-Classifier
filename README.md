@@ -24,54 +24,44 @@ Developed by: Kamaleshwaran S
 RegisterNumber: 212225040165
 */
 import pandas as pd
-from IPython.display import display
-
-
-data = pd.read_csv("Employee.csv")
-print("===== DATA HEAD (5 ROWS) =====")
-display(data.head())
-
-print("\n===== DATA INFO =====")
-print(data.info())
-
-print("\n===== MISSING VALUES =====")
-display(data.isnull().sum().to_frame("Missing Values"))
-
-from sklearn.preprocessing import LabelEncoder
-le = LabelEncoder()
-data["salary"] = le.fit_transform(data["salary"])
-print("\n===== X HEAD (5 ROWS) =====")
-display(x.head())
-
+from sklearn.datasets import load_iris
+from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import train_test_split
-x_train, x_test, y_train, y_test = train_test_split(
-    x, y, test_size=0.2, random_state=100
-)
+from sklearn.metrics import accuracy_score,confusion_matrix
 
-from sklearn.tree import DecisionTreeClassifier
-dt = DecisionTreeClassifier(criterion="entropy")
-dt.fit(x_train, y_train)
+iris = load_iris()
+
+df = pd.DataFrame(iris.data, columns=iris.feature_names)
+df['target'] = iris.target
+print(df.head())
+
+X = df.drop('target', axis=1)
+y = df['target']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+sgd_clf = SGDClassifier(max_iter = 1000, tol = 1e-3)
+sgd_clf.fit(X_train, y_train)
 
 
-y_pred = dt.predict(x_test)
 
-from sklearn import metrics
-accuracy = metrics.accuracy_score(y_test, y_pred)
-print("\n===== MODEL ACCURACY =====")
-print("Accuracy:", accuracy)
+y_pred = sgd_clf.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy:.3f}")
 
-# Prediction for new employee record
-print("\n===== PREDICTION =====")
-print(dt.predict([[0.5, 0.8, 9, 260, 6, 0, 1, 2]]))
+
+cm = confusion_matrix(y_test, y_pred)
+print("Confusion Matrix:")
+print(cm)
+
 ```
 
-## Output:
-<img width="1424" height="284" alt="image" src="https://github.com/user-attachments/assets/d6429a7c-81cf-4776-8b36-51126b39d557" />
-<img width="585" height="423" alt="image" src="https://github.com/user-attachments/assets/c13baa34-d5b9-4ce3-b138-a1b36746b2fe" />
-<img width="441" height="428" alt="image" src="https://github.com/user-attachments/assets/c78cb501-7c5a-4e10-ab85-fa74ff039896" />
-<img width="469" height="77" alt="image" src="https://github.com/user-attachments/assets/bfce5270-ef0c-4133-964e-f3dae0c9575a" />
-<img width="1266" height="266" alt="image" src="https://github.com/user-attachments/assets/7a68b41a-f6ce-4a42-a21f-cc1f93ca965a" />
-<img width="385" height="142" alt="image" src="https://github.com/user-attachments/assets/33fce426-453b-44e9-bfaf-d7f4d70c2429" />
+## Output:/>
+<img width="1218" height="532" alt="image" src="https://github.com/user-attachments/assets/548f7b69-c521-4441-9f2a-95c48f03b160" />
+<img width="1218" height="532" alt="image" src="https://github.com/user-attachments/assets/cdadf2b9-5b99-4b62-8ea0-d2b91e23c66d" />
+<img width="1218" height="532" alt="image" src="https://github.com/user-attachments/assets/839723c2-7131-4caf-b7c3-53cf18acbda6" />
+
+
 
 
 
